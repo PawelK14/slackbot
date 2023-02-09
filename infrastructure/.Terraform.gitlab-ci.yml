@@ -1,0 +1,17 @@
+lint-test-job:
+  stage: test
+  before_script:
+    - apk update && apk add bash curl unzip
+    - curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+  script:
+    - tflint --chdir infrastructure
+
+plan-job:
+  stage: test
+  before_script:
+    - apk update && apk add curl unzip
+    - curl -o terraform.zip https://releases.hashicorp.com/terraform/1.3.7/terraform_1.3.7_linux_amd64.zip
+    - unzip terraform.zip
+  script:
+    - ./terraform -chdir=infrastructure init
+    - ./terraform -chdir=infrastructure plan -var-file test.tfvars
